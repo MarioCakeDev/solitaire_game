@@ -1,17 +1,12 @@
 #![allow(clippy::type_complexity)]
 
-mod actions;
-mod audio;
-mod loading;
-mod menu;
-mod player;
+mod loading_plugin;
+mod main_menu_plugin;
+mod solitaire_plugin;
 
-use crate::actions::ActionsPlugin;
-use crate::audio::InternalAudioPlugin;
-use crate::loading::LoadingPlugin;
-use crate::menu::MenuPlugin;
-use crate::player::PlayerPlugin;
-
+use crate::loading_plugin::LoadingPlugin;
+use crate::main_menu_plugin::MainMenuPlugin;
+use crate::solitaire_plugin::SolitairePlugin;
 use bevy::app::App;
 #[cfg(debug_assertions)]
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
@@ -21,12 +16,12 @@ use bevy::prelude::*;
 // See https://bevy-cheatbook.github.io/programming/states.html
 // Or https://github.com/bevyengine/bevy/blob/main/examples/ecs/state.rs
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
-enum GameState {
+pub(crate) enum GameState {
     // During the loading State the LoadingPlugin will load our assets
     #[default]
     Loading,
     // During this State the actual game logic is executed
-    Playing,
+    Solitaire,
     // Here the menu is drawn and waiting for player interaction
     Menu,
 }
@@ -37,10 +32,8 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<GameState>().add_plugins((
             LoadingPlugin,
-            MenuPlugin,
-            ActionsPlugin,
-            InternalAudioPlugin,
-            PlayerPlugin,
+            MainMenuPlugin,
+            SolitairePlugin,
         ));
 
         #[cfg(debug_assertions)]
